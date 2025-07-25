@@ -1,5 +1,8 @@
-import { InterfaceUser } from 'src/interfaces/user.interface';
-import { BaseEntity, Column, Entity } from 'typeorm';
+import { ROLES } from '../../../src/constants/roles';
+import { BaseEntity } from '../../../src/config/base.entity';
+import { InterfaceUser } from '../../../src/interfaces/user.interface';
+import {  Column, Entity, OneToMany } from 'typeorm';
+import { UserProjectEntity } from './userProjects.entity';
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity implements InterfaceUser {
   @Column()
@@ -8,12 +11,14 @@ export class UserEntity extends BaseEntity implements InterfaceUser {
   lastName: string;
   @Column()
   age: number;
-  @Column()
+  @Column({unique: true})
   email: string;
   @Column()
   password: string;
-  @Column()
-  role: string;
-  @Column()
+  @Column({type:'enum', enum:ROLES})
+  role: ROLES;
+  @Column({unique: true})
   username: string;
+  @OneToMany(()=> UserProjectEntity,(userproject)=>userproject.user)
+  projectsInclude:UserProjectEntity[]
 }
