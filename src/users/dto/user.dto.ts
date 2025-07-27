@@ -4,9 +4,12 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
-import { ROLES } from '../../../src/constants/roles';
+import { ACCESS_LEVEL, ROLES } from '../../../src/constants/roles';
 import { PartialType } from '@nestjs/mapped-types';
+import { UserEntity } from '../entities/user.entity';
+import { ProjectEntity } from '../../../src/projects/entities/project.entity';
 
 export class UserDto {
   @IsNotEmpty()
@@ -39,3 +42,15 @@ export class UserDto {
 }
 
 export class UserUpdateDto extends PartialType(UserDto) {}
+
+export class UserToProjectDto {
+  @IsNotEmpty()
+  @IsUUID()
+  user: UserEntity;
+  @IsNotEmpty()
+  @IsUUID()
+  project: ProjectEntity;
+  @IsNotEmpty()
+  @IsEnum(ACCESS_LEVEL)
+  access_level: ACCESS_LEVEL;
+}

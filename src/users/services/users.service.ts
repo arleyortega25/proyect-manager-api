@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { UserDto, UserUpdateDto } from '../dto/user.dto';
+import { UserDto, UserToProjectDto, UserUpdateDto } from '../dto/user.dto';
 import { ErrorManager } from '../../../src/config/error.manager';
+import { UserProjectEntity } from '../entities/userProjects.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserProjectEntity)
+    private readonly userProjectRepository: Repository<UserProjectEntity>,
   ) {}
   public async createUser(body: UserDto): Promise<UserEntity> {
     try {
@@ -34,9 +37,12 @@ export class UsersService {
   }
   public async findUserById(id: string): Promise<UserEntity> {
     try {
-      const user: UserEntity | null = await this.userRepository.findOneBy({
-        id,
-      });
+      const user: UserEntity | null = await this.userRepository
+        .createQueryBuilder('user')
+        .where({ id })
+        .leftJoinAndSelect('user.projectsInclude', 'projectsInclude')
+        .leftJoinAndSelect('projectsInclude.project', 'project')
+        .getOne();
       if (!user)
         throw new ErrorManager({
           type: 'BAD_REQUEST',
@@ -72,6 +78,13 @@ export class UsersService {
           message: 'element can not be deleted',
         });
       return user;
+    } catch (error) {
+      throw ErrorManager.createSignatureError(error.message);
+    }
+  }
+  public async relationProject(body: UserToProjectDto) {
+    try {
+      return await this.userProjectRepository.save(body);
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
