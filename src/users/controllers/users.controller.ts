@@ -6,21 +6,27 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { UserDto, UserToProjectDto, UserUpdateDto } from '../dto/user.dto';
+import { PublicAccess } from '../../../src/auth/decorators/public.decorators';
+import { AuthGuard } from '../../../src/auth/guards/auth.guard';
 
 @Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usesrService: UsersService) {}
   @Post('register')
   public async registerUser(@Body() body: UserDto) {
     return await this.usesrService.createUser(body);
   }
+
   @Get('all')
   public async findAllUsers() {
     return await this.usesrService.findUsers();
   }
+  @PublicAccess()
   @Get(':id')
   public async findUsersById(@Param('id') id: string) {
     return await this.usesrService.findUserById(id);

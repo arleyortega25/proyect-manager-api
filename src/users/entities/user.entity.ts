@@ -3,6 +3,7 @@ import { BaseEntity } from '../../../src/config/base.entity';
 import { InterfaceUser } from '../../../src/interfaces/user.interface';
 import {  Column, Entity, OneToMany } from 'typeorm';
 import { UserProjectEntity } from './userProjects.entity';
+import {Exclude} from 'class-transformer'
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity implements InterfaceUser {
   @Column()
@@ -13,6 +14,7 @@ export class UserEntity extends BaseEntity implements InterfaceUser {
   age: number;
   @Column({unique: true})
   email: string;
+  @Exclude()
   @Column()
   password: string;
   @Column({type:'enum', enum:ROLES})

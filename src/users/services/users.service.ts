@@ -5,6 +5,8 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UserDto, UserToProjectDto, UserUpdateDto } from '../dto/user.dto';
 import { ErrorManager } from '../../../src/config/error.manager';
 import { UserProjectEntity } from '../entities/userProjects.entity';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UsersService {
@@ -16,7 +18,10 @@ export class UsersService {
   ) {}
   public async createUser(body: UserDto): Promise<UserEntity> {
     try {
-      return await this.userRepository.save(body);
+      const newUser = await this.userRepository.create(body);
+      const newUserPassword = await bcrypt.hash(newUser.password, 10);
+      newUser.password = newUserPassword;
+      return await this.userRepository.save(newUser);
     } catch (error) {
       throw new Error(error.message || 'Unknown Error');
     }
@@ -88,5 +93,11 @@ export class UsersService {
     } catch (error) {
       throw ErrorManager.createSignatureError(error.message);
     }
+  }
+  public async findBy({ key, value }: { key: keyof UserDto; value: any }) {
+    try {
+      const user: UserEntity |null = await this.userRepository.createQueryBuilder('user').addSelect('user.password').where({[key]:value}).getOne();
+      return user
+    } catch (error) {}
   }
 }
