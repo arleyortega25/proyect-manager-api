@@ -1,10 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { PUBLIC_KEY } from '../../../src/constants/key-decorator';
-import { UsersService } from '../../../src/users/services/users.service';
+import { PUBLIC_KEY } from 'src/constants/key-decorator';
+import { UsersService } from 'src/users/services/users.service';
 import { IuseToken } from '../interfaces/auth.interface';
 import { useToken } from '../utils/use.tokens';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class AuthGuard implements CanActivate {
   ) {}
   async canActivate(
     context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  ): Promise<boolean> {
     const isPublic = this.reflector.get<boolean>(
       PUBLIC_KEY,
       context.getHandler()

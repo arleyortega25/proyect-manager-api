@@ -6,10 +6,10 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { ACCESS_LEVEL, ROLES } from '../../../src/constants/roles';
+import { ACCESS_LEVEL, ROLES } from 'src/constants/roles';
 import { PartialType } from '@nestjs/mapped-types';
 import { UserEntity } from '../entities/user.entity';
-import { ProjectEntity } from '../../../src/projects/entities/project.entity';
+import { ProjectEntity } from 'src/projects/entities/project.entity';
 
 export class UserDto {
   @IsNotEmpty()

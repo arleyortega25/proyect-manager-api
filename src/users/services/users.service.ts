@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UserDto, UserToProjectDto, UserUpdateDto } from '../dto/user.dto';
-import { ErrorManager } from '../../../src/config/error.manager';
+import { ErrorManager } from 'src/config/error.manager';
 import { UserProjectEntity } from '../entities/userProjects.entity';
 import * as bcrypt from 'bcrypt';
 

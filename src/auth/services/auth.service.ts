@@ -3,7 +3,7 @@ import { UsersService } from 'src/users/services/users.service';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { UserEntity } from '../../../src/users/entities/user.entity';
 import { PayloadToken } from '../interfaces/auth.interface';
 dotenv.config({
   path: `${process.env.NODE_ENV || 'develop'}.env`,

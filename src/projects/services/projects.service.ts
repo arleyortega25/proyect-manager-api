@@ -3,17 +3,30 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectEntity } from '../entities/project.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { ProjectDto, ProjectUpdateDto } from '../dto/projects.dto';
-import { ErrorManager } from '../../../src/config/error.manager';
+import { ErrorManager } from 'src/config/error.manager';
+import { UserProjectEntity } from 'src/users/entities/userProjects.entity';
+import { ACCESS_LEVEL } from 'src/constants/roles';
+import { UsersService } from 'src/users/services/users.service';
 
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectRepository(ProjectEntity)
     private readonly projectRepository: Repository<ProjectEntity>,
+    @InjectRepository(UserProjectEntity)
+    private readonly UserProjectRepository: Repository<UserProjectEntity>,  
+    private readonly usesrService: UsersService
   ) {}
-  public async CreateProject(body: ProjectDto): Promise<ProjectEntity> {
+  public async CreateProject(body: ProjectDto, userid: string): Promise<ProjectEntity> {
     try {
-      return await this.projectRepository.save(body);
+      const user = await this.usesrService.findUserById(userid)
+      const project = await this.projectRepository.create(body)
+      await this.UserProjectRepository.save({
+        accessLevel:ACCESS_LEVEL.OWNER,
+        user:user,
+        project: body
+      })
+      return await this.projectRepository.save(project);
     } catch (error) {
       throw new Error(error.message || 'Unknown Error');
     }

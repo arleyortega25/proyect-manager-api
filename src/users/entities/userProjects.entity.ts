@@ -1,8 +1,8 @@
-import { BaseEntity } from "../../../src/config/base.entity";
-import { ACCESS_LEVEL } from "../../../src/constants/roles";
+import { BaseEntity } from "src/config/base.entity";
+import { ACCESS_LEVEL } from "src/constants/roles";
 import { Column, Entity, ManyToOne } from "typeorm";
 import { UserEntity } from "./user.entity";
-import { ProjectEntity } from "../../../src/projects/entities/project.entity";
+import { ProjectEntity } from "src/projects/entities/project.entity";
 @Entity({name:'users_projects'})
 export class UserProjectEntity extends BaseEntity{
     @Column({type:'enum', enum:ACCESS_LEVEL})
